@@ -29,7 +29,11 @@ extern "C" __declspec(dllexport) void add2(int rows, int cols, unsigned __int8 *
 
    /* Insert code here */
    Mat temp;
-   boxFilter(image_src, temp, -1, Size(5, 5));
-   Canny(temp, image_src, 150, 100, 3);
+//   boxFilter(image_src, temp, -1, Size(5, 5));
+//   Canny(temp, image_src, 150, 100, 3);
+   adaptiveThreshold(image_src, temp, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 21, -2);
+   //更多请阅读：https://www.yiibai.com/opencv/opencv_adaptive_threshold.html
+
+
 
 };
