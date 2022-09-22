@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(lv2cv)
 
-#add_executable(cv_start main.cpp)
-add_library(lv2cv SHARED lv2cv.cpp lv2cv.h)
+add_executable(lv2cv main.cpp)
+#add_library(lv2cv SHARED lv2cv.cpp lv2cv.h)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -11,8 +11,8 @@ set(OpenCV_DIR "D:\\cvprojects\\mingw_455\\install\\x64\\mingw\\lib")
 
 
 # 使用conan时需要添加这两行
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+#conan_basic_setup()
 
 find_package(OpenCV REQUIRED)
 
