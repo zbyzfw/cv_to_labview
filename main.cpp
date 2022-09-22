@@ -140,18 +140,26 @@ int main() {
     transpose(img,img);
     flip(img,img, -1);
     adaptiveThreshold(img,img,255,ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY,21,-2);
+    //腐蚀操作
+//    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
+//    //    Mat dstImage;
+//    erode(img, img, element);
+//    imshow("hah",img);
+//    waitKey(0);
     findContours(img,contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE,Point(0, 0));
     // if (contours.size() == 0) {return;}
     Mat drawImg = Mat::zeros(img.size(), CV_8UC3);
 //    cout << img.size[0] << endl;
 //    cout << center_y[0] << endl;
     drawImg.setTo(cv::Scalar(0, 0, 0));
-    //腐蚀操作
-//    Mat element = getStructuringElement(MORPH_RECT, Size(15, 15));
-//    Mat dstImage;
-//    erode(srcImage, dstImage, element);
+
     for (int i = 0; i < contours.size()-1; i++) {
+
       RotatedRect rect = minAreaRect(contours[i]);
+      if(rect.size.width>900 || rect.size.height>900){
+        cout <<rect.size.width<<"--"<<rect.size.height<<endl;
+      }
+
       if((rect.size.width>1000 || rect.size.height>1000) && (rect.size.width<60 || rect.size.height<60)){
         if(!center_y[0]){
           best_contours.push_back(contours[i]);
