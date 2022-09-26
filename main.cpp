@@ -22,6 +22,11 @@ double getSeconds(chrono::time_point<chrono::system_clock> &start,
   return double(duration.count()) / 1000000;
 }
 
+struct points {
+  int left = 0;
+  int right = 0;
+};
+
 bool polynomial_curve_fit(std::vector<cv::Point>& key_point, int n, cv::Mat& A)
 {
   //Number of key points
@@ -131,6 +136,7 @@ int main() {
     vector<Vec4i> hierarchy;
     vector<vector<Point>> best_contours;
     vector<int> center_y(2);
+    struct points pt;
     float rotated;
 //    std::string image_path = "E:/cvproject2/cv_start/lay/img1 (8).bmp";
     std::string image_path = "E:/cvproject2/cv_start/09.png";
@@ -139,19 +145,46 @@ int main() {
     Mat img = imread(image_path,0);
     transpose(img,img);
     flip(img,img, -1);
-    adaptiveThreshold(img,img,255,ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY,21,-2);
+    Mat drawImg = Mat::zeros(img.size(), CV_8UC3);
+    adaptiveThreshold(img,drawImg,255,ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY,21,-2);
     //腐蚀操作
 //    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
 //    //    Mat dstImage;
 //    erode(img, img, element);
 //    imshow("hah",img);
 //    waitKey(0);
-    findContours(img,contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE,Point(0, 0));
+    findContours(drawImg,contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_NONE,Point(0, 0));
     // if (contours.size() == 0) {return;}
-    Mat drawImg = Mat::zeros(img.size(), CV_8UC3);
 //    cout << img.size[0] << endl;
 //    cout << center_y[0] << endl;
+    // 计算直方图
     drawImg.setTo(cv::Scalar(0, 0, 0));
+    Mat srcROI;
+    //需要计算的图像的通道，灰度图像为0，BGR图像需要指定B,G,R
+    const int channels[] = { 0 };
+//    OutputArray hist2 = hist1;
+    Mat hist;//定义输出Mat类型
+    Mat hist1;//定义输出Mat类型
+    int dims = 1;//设置直方图维度
+    const int histSize[] = { 256 }; //直方图每一个维度划分的柱条的数目
+    //每一个维度取值范围
+    float pranges[] = { 0, 255 };//取值区间
+    const float* ranges[] = { pranges };
+    vector<double> hist_list(4);
+
+//    double max_val;
+//    minMaxLoc(img, 0, &max_val, 0, 0);//计算直方图的最大像素值
+    Mat roi = imread("roi.png",0);
+    calcHist(&roi, 1, channels, Mat(), hist1, dims, histSize, ranges, true, false);//计算直方图
+    normalize(hist1, hist1, 0, 1, NORM_MINMAX, -1, Mat());
+    for (int x = 0; x < drawImg.size[1]; x=x+drawImg.size[1]/4){
+
+      srcROI = img(Rect(x,0,img.cols/4,img.rows));
+      calcHist(&srcROI, 1, channels, Mat(), hist, dims, histSize, ranges, true, false);//计算直方图
+      normalize(hist, hist, 0, 1, NORM_MINMAX, -1, Mat());
+      double base_base = compareHist(hist, hist1, 1);
+      hist_list.push_back(base_base);
+    }
 
     for (int i = 0; i < contours.size()-1; i++) {
 
@@ -174,6 +207,13 @@ int main() {
           if(abs(rect.center.y-center_y[0])>150){
             best_contours.push_back(contours[i]);
             center_y[1] = rect.center.y;
+//            if(center_y[1]>center_y[2]){
+//              pt.left = center_y[0];
+//              pt.right = center_y[1];
+//            }else{
+//              pt.left = center_y[1];
+//              pt.right = center_y[0];
+//            }
           }
         }
       }
@@ -249,6 +289,7 @@ int main() {
     cout <<"angle: "<< rotated << endl;
     cout << "time= " << time << "s" << endl;
     cout << "diameter:"<< abs(center_y[1]-center_y[0])* cos(a2r(rotated)) << endl;
+    cout << "swing:" << abs((center_y[0]+center_y[1])/2-drawImg.size[0]/2) << endl;
 //    imshow("baizhi",drawImg);
 //    waitKey(10000);
     return 0;
