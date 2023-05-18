@@ -138,8 +138,8 @@ int main() {
     vector<int> center_y(2);
     struct points pt;
     float rotated;
-//    std::string image_path = "E:/cvproject2/cv_start/lay/img1 (8).bmp";
-    std::string image_path = "E:/cvproject2/cv_start/09.png";
+     std::string image_path = "E:/cvproject2/cv_start/lay/img1 (8).bmp";
+//    std::string image_path = "E:/cvproject2/cv_start/09.png";
     //convexHull();
     Point org(10, 90);
     Mat img = imread(image_path,0);
@@ -172,19 +172,19 @@ int main() {
     const float* ranges[] = { pranges };
     vector<double> hist_list(4);
 
-//    double max_val;
-//    minMaxLoc(img, 0, &max_val, 0, 0);//计算直方图的最大像素值
-    Mat roi = imread("roi.png",0);
-    calcHist(&roi, 1, channels, Mat(), hist1, dims, histSize, ranges, true, false);//计算直方图
-    normalize(hist1, hist1, 0, 1, NORM_MINMAX, -1, Mat());
-    for (int x = 0; x < drawImg.size[1]; x=x+drawImg.size[1]/4){
-
-      srcROI = img(Rect(x,0,img.cols/4,img.rows));
-      calcHist(&srcROI, 1, channels, Mat(), hist, dims, histSize, ranges, true, false);//计算直方图
-      normalize(hist, hist, 0, 1, NORM_MINMAX, -1, Mat());
-      double base_base = compareHist(hist, hist1, 1);
-      hist_list.push_back(base_base);
-    }
+    //    double max_val;
+    //    minMaxLoc(img, 0, &max_val, 0, 0);//计算直方图的最大像素值
+//    Mat roi = imread("roi.png",0);
+//    calcHist(&roi, 1, channels, Mat(), hist1, dims, histSize, ranges, true, false);//计算直方图
+//    normalize(hist1, hist1, 0, 1, NORM_MINMAX, -1, Mat());
+//    for (int x = 0; x < drawImg.size[1]; x=x+drawImg.size[1]/4){
+//
+//      srcROI = img(Rect(x,0,img.cols/4,img.rows));
+//      calcHist(&srcROI, 1, channels, Mat(), hist, dims, histSize, ranges, true, false);//计算直方图
+//      normalize(hist, hist, 0, 1, NORM_MINMAX, -1, Mat());
+//      double base_base = compareHist(hist, hist1, 1);
+//      hist_list.push_back(base_base);
+//    }
 
     for (int i = 0; i < contours.size()-1; i++) {
 
